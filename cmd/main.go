@@ -6,9 +6,14 @@ import (
 	"net/http"
 )
 
+const PORT = ":8080"
+
 func main() {
-	http.HandleFunc("/books", handlers.BooksHandler)
-	err := http.ListenAndServe(":8080", nil)
+	bh := handlers.NewBooksHandler()
+	http.HandleFunc("/books", bh.Get)
+
+	log.Println("Serving on port", PORT)
+	err := http.ListenAndServe(PORT, nil)
 	if err != nil {
 		log.Fatal("[ERROR] error starting server.", err)
 	}
