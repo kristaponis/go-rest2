@@ -4,7 +4,7 @@ Just simple REST example No. 2
 
 ### Requirements
 
-Content type is application/json
+Content-Type is application/json
 
 - GET /books
   - return list of books in JSON format
@@ -15,7 +15,11 @@ Content type is application/json
 - POST /books
   - return Status 415 if content is not application/json
 - GET /admin
-  - access with basic auth
-- GET /books/rand
-  - return random book
+  - access with HTTP BasicAuth
 
+### Run BasicAuth:
+
+```bash
+$ ADMIN_PASSWORD=pass make run
+$ curl -u admin:pass localhost:8080/admin 
+```
