@@ -6,6 +6,7 @@ import (
 	"go-rest2/models"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -72,5 +73,26 @@ func (b *BooksHandler) post(w http.ResponseWriter, r *http.Request) {
 func NewBooksHandler() *BooksHandler {
 	return &BooksHandler{
 		store: map[string]models.Book{},
+	}
+}
+
+func (b *BooksHandler) GetBook(w http.ResponseWriter, r *http.Request) {
+	path := strings.Split(r.URL.Path, "/")
+	if len(path) != 3 {
+		http.Error(w, "[ERROR] bad path", http.StatusNotFound)
+		return
+	}
+	b.Lock()
+	book, ok := b.store[path[2]]
+	b.Unlock()
+	if !ok {
+		http.Error(w, "[ERROR] something went wrong", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(book); err != nil {
+		http.Error(w, "[ERROR] error encoding json", http.StatusInternalServerError)
+		log.Println(err)
 	}
 }
